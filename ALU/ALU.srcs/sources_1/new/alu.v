@@ -28,24 +28,44 @@
 // Or
 // + 3 More
 
-module alu(A, B, Op, Y, zero, neg, Cout, overflow);
+module alu(A, B, OP, Y, zero, neg, Cout, overflow);
 
     input       [3:0] A, B;                 // operands
-    input       [2:0] Op;                   // operation
+    input       [2:0] OP;                   // operation
     output reg  [3:0] Y;                    // resultant
     output      zero, neg, Cout, overflow;  // status flags       
     
+    reg flagN, flagC, flagO;
+    
     always @ (*) begin
-        case (Op)
-            3'b000: assign Y = A + B;   // add
-            3'b001: assign Y = A - Y;   // subtract
-            3'b010: assign Y = A * B;   // multiplication
-            3'b011: assign Y = A / B;   // division
-            3'b100: assign Y = A | B;   // or
-            3'b101: assign Y = A ^ B;   // xor
-            3'b110: assign Y = A & B;   // and
-            3'b111: assign Y = 0;
+        case (OP)
+            3'b000: Y = 0;                          // null
+            3'b001: begin                           // add
+                        Y = A + B;
+                        flagC = (A[3] & B[3]) | (A[3] & ~Y[3]) | (B[3] & ~Y[3]);                 
+                    end               
+            3'b010: begin                           // subtract
+                        Y = A - B;                      
+                        flagO = Cout ^ A[3] ^ B[3] ^ Y[3];
+                        flagN = (A < B) & (OP == 3'b010); 
+                    end         
+            3'b011: Y = (A == B) ? 4'b1111 : 4'b0000;        // compare
+            3'b100: Y = A & B;                      // and      
+            3'b101: Y = A | B;                      // or            
+            3'b110: Y = A ^ B;                      // xor           
+            3'b111: Y = A << 1;                     // shift left        
         endcase
     end
+    
+    assign zero = ~(|Y);
+    assign Cout = flagC;
+    assign overflow = flagO;
+    assign neg = flagN;
 
 endmodule
+
+
+
+
+
+
