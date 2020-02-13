@@ -24,8 +24,9 @@ Instructor: Menglai Yin
   
 ### Note to reader
   Simply cloning the projects no longer works. 
-  I have edited .gitignore to only include .v .xdc .bit files
+  I have edited .gitignore to only include .v .xdc .bit .wcfg files
   - .v      :   verilog files
   - .xdc    :   board constraint file
   - .bit    :   bitstream file to simply upload to board
+  - .wcfg   :   waveform configuration used for simulations
 
