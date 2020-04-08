@@ -106,13 +106,22 @@ module divider
                     if (registerRA[2*(dividendWidth - 1):dividendWidth] >= registerB) begin
                         quotient_next[i] = 1;
                         registerRA_next[2*(dividendWidth - 1):dividendWidth] = registerRA[2*(dividendWidth - 1):dividendWidth] - registerB;
+                        remainder_next = registerRA_next[2*(dividendWidth - 1):dividendWidth];
+                    end else begin
+                        quotient_next[i] = 0;
+                    end
+                    if (!i) begin
+                        state_next = S3;
+                    end else begin
+                        i_next = i - 1;
+                        state_next = S1;
                     end
                 end
             S3: begin
                     done_next = 1;
-                    remainder_next - registerRA[2*(dividendWidth - 1):dividendWidth];
+                    remainder_next = registerRA[2*(dividendWidth - 1):dividendWidth];
                     if (!command) begin
-                        
+                        state_next = S0;
                     end
                 end
             default: begin

@@ -31,13 +31,14 @@ module divider_tb();
     wire [15:0] registerRA;
     wire [1:0] state_reg;
 
-    divider uut(clk, reset, command, dataA, dataB, quotient, remainder, done, i, registerRA, state_reg);
+    divider #(8, 4) uut(clk, reset, command, dataA, dataB, quotient, remainder, done, i, registerRA, state_reg);
 
     always #1 clk = ~clk;
 
     initial begin
             reset = 1; clk = 0; command = 0;
-        #1  dataA = 140; dataB = 9; 
+        #1  reset = 0;
+        #2  dataA = 140; dataB = 9; 
         #5  command = 1;
     end
 
