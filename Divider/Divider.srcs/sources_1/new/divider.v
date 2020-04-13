@@ -33,7 +33,7 @@ module divider
         output reg  [dividendWidth-1:0] remainder,
         output reg  done,
         output reg  [2:0] i,
-        output reg  [2*(dividendWidth-1):0] registerRA,
+        output reg  [2*dividendWidth-1:0] registerRA,
         output reg  [1:0] state_reg
     );
 
@@ -45,7 +45,7 @@ module divider
     reg [1:0] state_next;
     reg [dividendWidth-1:0] registerA, registerA_next;
     reg [dividendWidth-1:0] registerB, registerB_next;
-    reg [2*(dividendWidth-1):0] registerRA_next;
+    reg [2*dividendWidth-1:0] registerRA_next;
     reg [dividendWidth-1:0] quotient_next;
     reg [dividendWidth-1:0] remainder_next;
     reg [2:0] i_next;
@@ -61,7 +61,7 @@ module divider
             quotient        <= 0;
             remainder       <= 0;
             i               <= dividendWidth - 1;
-            done <= 0;
+            done            <= 0;
         end else begin
             state_reg       <= state_next;
             registerA       <= registerA_next;
@@ -75,14 +75,14 @@ module divider
     end
 
     always @(*) begin
-        state_next          <= state_reg;
-        registerA_next      <= registerA;  
-        registerB_next      <= registerB; 
-        registerRA_next     <= registerRA;
-        quotient_next       <= quotient;
-        remainder_next      <= remainder;  
-        i_next              <= i;
-        done_next           <= done;       
+        state_next          = state_reg;
+        registerA_next      = registerA;  
+        registerB_next      = registerB; 
+        registerRA_next     = registerRA;
+        quotient_next       = quotient;
+        remainder_next      = remainder;  
+        i_next              = i;
+        done_next           = done;       
     
         case (state_reg)
             S0: begin
@@ -99,14 +99,14 @@ module divider
                     end
                 end
             S1: begin
-                    registerRA_next = registerRA << 1;
+                    registerRA_next = {registerRA[2*dividendWidth-2:0], 1'b0}; // registerRA << 1;
                     state_next = S2;
                 end
             S2: begin
-                    if (registerRA[2*(dividendWidth - 1):dividendWidth] >= registerB) begin
+                    if (registerRA[2*dividendWidth-1:dividendWidth] >= registerB) begin
                         quotient_next[i] = 1;
-                        registerRA_next[2*(dividendWidth - 1):dividendWidth] = registerRA[2*(dividendWidth - 1):dividendWidth] - registerB;
-                        remainder_next = registerRA_next[2*(dividendWidth - 1):dividendWidth];
+                        registerRA_next[2*dividendWidth-1:dividendWidth] = registerRA[2*dividendWidth-1:dividendWidth] - registerB;
+                        remainder_next = registerRA_next[2*dividendWidth-1:dividendWidth];
                     end else begin
                         quotient_next[i] = 0;
                     end
@@ -119,7 +119,7 @@ module divider
                 end
             S3: begin
                     done_next = 1;
-                    remainder_next = registerRA[2*(dividendWidth - 1):dividendWidth];
+                    remainder_next = registerRA[2*dividendWidth-1:dividendWidth];
                     if (!command) begin
                         state_next = S0;
                     end
@@ -131,8 +131,5 @@ module divider
         endcase
 
     end
-
-    
-
 
 endmodule
